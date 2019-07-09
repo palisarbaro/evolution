@@ -6,21 +6,20 @@ class Matrix
 {
     int width,height;
     T** matrix;
-    bool looped;
 public:
-    Matrix(int width,int height, bool looped=false):width(width),height(height),looped(looped)
+    Matrix(int width,int height):width(width),height(height)
     {
         matrix = new T*[width];
         for(int i=0;i<width;i++){
             matrix[i]=new T[height];
         }
     }
-    void Set(int x,int y,T val){
-        loopOrThrow(x,y);
+    void Set(int x,int y,T val,bool looped=false){
+        loopOrThrow(x,y,looped);
         matrix[x][y] = val;
     }
-    T Get(int x,int y){
-        loopOrThrow(x,y);
+    T Get(int x,int y, bool looped=false){
+        loopOrThrow(x,y,looped);
         return matrix[x][y];
     }
     ~Matrix(){
@@ -30,11 +29,12 @@ public:
         delete[] matrix;
     }
 private:
-    bool isCoordinatesCorrect(int x, int y){
-        if(x<0 || x>=width) return false;
-        if(y<0 || y>=height) return false;
+    bool isCoordinatesCorrect(int x, int y) {
+        if(x < 0 || x >= width) return false;
+        if(y < 0 || y >= height) return false;
         return true;
     }
+
     void lp(int& v,int max){ //обобщение loopX и loopY
         v = v%max;
         if(v<0) v = max+v;
@@ -45,7 +45,7 @@ private:
     void loopY(int &y){
         lp(y,height);
     }
-    void loopOrThrow(int &x,int &y){
+    void loopOrThrow(int &x,int &y,bool looped){
         if(looped){
             loopX(x);
             loopY(y);
