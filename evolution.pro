@@ -25,17 +25,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        field.cpp \
         fieldwidget.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        universe.cpp
 
 HEADERS += \
         errors.h \
-        field.h \
         fieldwidget.h \
         mainwindow.h \
-        matrix.h
+        matrix.h \
+        universe.h
 
 FORMS += \
         fieldwidget.ui \

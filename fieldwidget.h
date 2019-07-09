@@ -2,21 +2,19 @@
 #define FIELDWIDGET_H
 
 #include <QWidget>
-
-namespace Ui {
-class FieldWidget;
-}
-
+#include <QPainter>
+#include "universe.h"
 class FieldWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FieldWidget(QWidget *parent = nullptr);
+    explicit FieldWidget(int sqrSize,std::shared_ptr<Universe> field,QWidget *parent = nullptr);
     ~FieldWidget();
-
-private:
-    Ui::FieldWidget *ui;
+protected:
+    std::shared_ptr<Universe> field;
+    void paintEvent(QPaintEvent* e);
+    int sqrSize;
 };
 
 #endif // FIELDWIDGET_H

@@ -1,13 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+#include "fieldwidget.h"
+MainWindow::MainWindow(QWidget *parent) :   QMainWindow(parent),  ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    mainLayout = new QVBoxLayout;
+    std::shared_ptr<Universe> field(new Universe(3,10));
+    fw = new FieldWidget(10,field);
+   // setLayout(mainLayout);
+  //  mainLayout->addWidget(fw);
+    setCentralWidget(fw);
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;

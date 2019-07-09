@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QVBoxLayout>
+#include "fieldwidget.h"
 namespace Ui {
 class MainWindow;
 }
@@ -15,8 +16,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private:
+protected:
     Ui::MainWindow *ui;
+    QVBoxLayout* mainLayout;
+    FieldWidget* fw;
 };
 
 #endif // MAINWINDOW_H
