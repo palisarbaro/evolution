@@ -1,5 +1,5 @@
 #include "fieldwidget.h"
-FieldWidget::FieldWidget(int sqrSize,std::shared_ptr<Universe> field,QWidget *parent) : QWidget(parent), field(field),sqrSize(sqrSize)
+FieldWidget::FieldWidget(int sqrSize,std::shared_ptr<Water> field,QWidget *parent) : QWidget(parent), field(field),sqrSize(sqrSize)
 {
     setFixedSize(sqrSize*field->GetWidth(),sqrSize*field->GetHeight());
 }

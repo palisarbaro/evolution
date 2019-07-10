@@ -3,16 +3,16 @@
 
 #include <QWidget>
 #include <QPainter>
-#include "universe.h"
+#include "water.h"
 class FieldWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FieldWidget(int sqrSize,std::shared_ptr<Universe> field,QWidget *parent = nullptr);
+    explicit FieldWidget(int sqrSize,std::shared_ptr<Water> field,QWidget *parent = nullptr);
     ~FieldWidget();
 protected:
-    std::shared_ptr<Universe> field;
+    std::shared_ptr<Water> field;
     void paintEvent(QPaintEvent* e);
     int sqrSize;
 };

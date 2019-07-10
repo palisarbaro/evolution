@@ -25,17 +25,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        bacteria.cpp \
         fieldwidget.cpp \
         main.cpp \
         mainwindow.cpp \
-        universe.cpp
+        water.cpp
 
 HEADERS += \
+        bacteria.h \
         errors.h \
         fieldwidget.h \
         mainwindow.h \
         matrix.h \
-        universe.h
+        water.h
 
 FORMS += \
         fieldwidget.ui \

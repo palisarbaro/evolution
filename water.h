@@ -4,13 +4,14 @@
 #include<iostream>
 #include <memory>
 #include<QColor>
-class Universe
+class Water
 {
 protected:
     int width,height;
     std::shared_ptr<Matrix<QColor>> View;
+
 public:
-    Universe(int width,int height);
+    Water(int width,int height);
     int GetHeight();
     int GetWidth();
     std::shared_ptr<Matrix<QColor>> GetView();
