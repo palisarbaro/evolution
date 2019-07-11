@@ -1,9 +1,10 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QVBoxLayout>
+
 #include "fieldwidget.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -21,5 +22,3 @@ protected:
     QVBoxLayout* mainLayout;
     FieldWidget* fw;
 };
-
-#endif // MAINWINDOW_H

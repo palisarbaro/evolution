@@ -1,10 +1,13 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include"matrix.h"
 #include<QDebug>
+
+#include<ctime>
+#include <cstdlib>
 
 int main(int argc, char *argv[])
 {
+    srand(time(nullptr));
     QApplication a(argc, argv);
 
     MainWindow w;

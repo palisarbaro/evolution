@@ -1,5 +1,4 @@
-#ifndef MATRIX_H
-#define MATRIX_H
+#pragma once
 #include"errors.h"
 template<class T>
 class Matrix
@@ -18,7 +17,7 @@ public:
         loopOrThrow(x,y,looped);
         matrix[x][y] = val;
     }
-    T Get(int x,int y, bool looped=false){
+    T& Get(int x,int y, bool looped=false){
         loopOrThrow(x,y,looped);
         return matrix[x][y];
     }
@@ -56,5 +55,3 @@ private:
         }
     }
 };
-
-#endif // MATRIX_H

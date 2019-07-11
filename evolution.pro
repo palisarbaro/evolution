@@ -27,6 +27,7 @@ CONFIG += c++11
 SOURCES += \
         bacteria.cpp \
         fieldwidget.cpp \
+        genome.cpp \
         main.cpp \
         mainwindow.cpp \
         water.cpp
@@ -35,6 +36,7 @@ HEADERS += \
         bacteria.h \
         errors.h \
         fieldwidget.h \
+        genome.h \
         mainwindow.h \
         matrix.h \
         water.h

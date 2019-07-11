@@ -1,20 +1,24 @@
-#ifndef FIELDWIDGET_H
-#define FIELDWIDGET_H
+#pragma once
 
 #include <QWidget>
 #include <QPainter>
+#include<QTimer>
+
 #include "water.h"
+
+class Water;
 class FieldWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FieldWidget(int sqrSize,std::shared_ptr<Water> field,QWidget *parent = nullptr);
+    explicit FieldWidget(int sqr_size,std::shared_ptr<Water> field,QWidget *parent = nullptr);
     ~FieldWidget();
 protected:
     std::shared_ptr<Water> field;
     void paintEvent(QPaintEvent* e);
-    int sqrSize;
+    int sqr_size;
+    QTimer* timer;
+private slots:
+    void slotTimer();
 };
-
-#endif // FIELDWIDGET_H
