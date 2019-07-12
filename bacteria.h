@@ -17,11 +17,13 @@ protected:
     int spent_energy;
     int attack;
     std::shared_ptr<Genome> genome;
+    const Bacteria* parent;
 public:
     Bacteria(Water* water, int x, int y,int energy,const Bacteria* parent);
     void Tick();
     void TryMove(int dx,int dy);
     void Kill();
+    void Clone();
     friend Water;
     friend Genome;
 };

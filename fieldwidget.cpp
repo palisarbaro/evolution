@@ -4,9 +4,9 @@ FieldWidget::FieldWidget(int sqrSize,std::shared_ptr<Water> field,QWidget *paren
     setFixedSize(sqrSize*field->GetWidth(),sqrSize*field->GetHeight());
     timer = new QTimer();
     connect(timer,SIGNAL(timeout()),this,SLOT(slotTimer()));
-    timer->start(100);
-    field->AddBacteria(0,4,40);
-    field->AddBacteria(0,4,40);
+    timer->start(10);
+    field->AddBacteria(0,4,100);
+    field->AddBacteria(0,5,100);
 }
 void FieldWidget::slotTimer(){
     field->Tick();

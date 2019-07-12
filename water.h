@@ -20,6 +20,7 @@ protected:
     std::vector<std::shared_ptr<Bacteria>> all_bacteries;
     std::list<std::shared_ptr<Bacteria>> alive_bacteries;
     Matrix<std::list<Bacteria*>> battle_field;
+    Matrix<unsigned int> food_field;
 public:
     Water(int width,int height);
     int GetHeight();
@@ -28,6 +29,7 @@ public:
     void UpdateView();
     void Tick();
     void Battle();
+    void Eating();
     int HowMuchSunEnergy(int depth);
     std::shared_ptr<Matrix<QColor>> GetView();
     friend Bacteria;

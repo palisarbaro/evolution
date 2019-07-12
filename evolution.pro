@@ -28,6 +28,7 @@ SOURCES += \
         bacteria.cpp \
         fieldwidget.cpp \
         genome.cpp \
+        lib.cpp \
         main.cpp \
         mainwindow.cpp \
         water.cpp
@@ -37,6 +38,7 @@ HEADERS += \
         errors.h \
         fieldwidget.h \
         genome.h \
+        lib.h \
         mainwindow.h \
         matrix.h \
         water.h

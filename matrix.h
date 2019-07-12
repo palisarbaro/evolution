@@ -27,12 +27,13 @@ public:
         }
         delete[] matrix;
     }
-private:
     bool isCoordinatesCorrect(int x, int y) {
         if(x < 0 || x >= width) return false;
         if(y < 0 || y >= height) return false;
         return true;
     }
+private:
+
 
     void lp(int& v,int max){ //обобщение loopX и loopY
         v = v%max;
@@ -50,8 +51,12 @@ private:
             loopY(y);
         }
         if(!isCoordinatesCorrect(x,y)){
-            if(looped) throw IMPOSSIBLE;
-            throw INCORRECT_INDEX;
+            if(looped){
+                throw IMPOSSIBLE;
+            }
+            else{
+                throw INCORRECT_INDEX;
+            }
         }
     }
 };
