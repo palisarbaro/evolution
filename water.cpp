@@ -66,6 +66,7 @@ void Water::Tick(){
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         (**iter).Tick();
         (**iter).energy-=(**iter).spent_energy;
+        if((**iter).energy<=0) (**iter).Kill();
     }
     Battle();
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
