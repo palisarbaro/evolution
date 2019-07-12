@@ -15,6 +15,7 @@ protected:
     int x,y;
     int energy;
     int spent_energy;
+    int attack;
     std::shared_ptr<Genome> genome;
 public:
     Bacteria(Water* water, int x, int y,int energy,const Bacteria* parent);

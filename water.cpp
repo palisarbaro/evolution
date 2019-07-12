@@ -49,10 +49,26 @@ void Water::UpdateView(){
     }
 
 }
+void Water::Battle(){
+    for(int i=0;i<width;i++){
+        for(int j=0;j<height;j++){
+            int sum_damage = 0;
+            for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
+                sum_damage += (**iter).attack;
+            }
+            for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
+                (**iter).energy-=(sum_damage-(**iter).attack);
+            }
+        }
+    }
+}
 void Water::Tick(){
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         (**iter).Tick();
         (**iter).energy-=(**iter).spent_energy;
+    }
+    Battle();
+    for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         if((**iter).energy<=0) (**iter).Kill();
     }
 

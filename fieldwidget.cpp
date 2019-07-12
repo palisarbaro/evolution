@@ -5,8 +5,8 @@ FieldWidget::FieldWidget(int sqrSize,std::shared_ptr<Water> field,QWidget *paren
     timer = new QTimer();
     connect(timer,SIGNAL(timeout()),this,SLOT(slotTimer()));
     timer->start(100);
-    field->AddBacteria(0,9,10);
-    field->AddBacteria(0,4,30);
+    field->AddBacteria(0,4,40);
+    field->AddBacteria(0,4,40);
 }
 void FieldWidget::slotTimer(){
     field->Tick();
@@ -22,7 +22,6 @@ void FieldWidget::paintEvent(QPaintEvent *e)
     field->UpdateView();
     QPainter painter(this);
     painter.setPen(QPen(Qt::black,1));
-    painter.drawEllipse(30,70,30,30);
     for(int i=0;i<field->GetWidth();i++){
         for(int j=0;j<field->GetHeight();j++){
             int x = sqr_size*i;

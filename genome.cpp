@@ -23,5 +23,6 @@ Genome::Genome(Bacteria* bacteira,const Bacteria* parent): bacteria(bacteira)
     }
     else{
         color = QColor(rand()%256,rand()%256,rand()%256);
+        attack = rand()%25;
     }
 }

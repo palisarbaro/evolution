@@ -2,6 +2,7 @@
 
 Bacteria::Bacteria(Water* water,int x,int y,int energy,const Bacteria* parent):water(water),x(x),y(y),energy(energy),genome(new Genome(this,parent))
 {
+    attack = genome->attack;
 }
 void Bacteria::Tick(){
     spent_energy = 0;

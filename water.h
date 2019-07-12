@@ -27,6 +27,7 @@ public:
     void AddBacteria(int x,int y,int energy,Bacteria* parent=nullptr);
     void UpdateView();
     void Tick();
+    void Battle();
     int HowMuchSunEnergy(int depth);
     std::shared_ptr<Matrix<QColor>> GetView();
     friend Bacteria;
