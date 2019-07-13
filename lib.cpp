@@ -15,3 +15,8 @@ int loop(int x, int max)
     if(x<0) x+=max;
     return x;
 }
+
+bool in_range(int x, int min, int max)
+{
+    return x>=min && x<=max;
+}

@@ -5,8 +5,8 @@ MainWindow::MainWindow(QWidget *parent) :   QMainWindow(parent),  ui(new Ui::Mai
 {
     ui->setupUi(this);
     mainLayout = new QVBoxLayout;
-    std::shared_ptr<Water> field(new Water(100,100));
-    fw = new FieldWidget(7,field);
+    std::shared_ptr<Water> field(new Water(300,30));
+    fw = new FieldWidget(6,field);
    // setLayout(mainLayout);
   //  mainLayout->addWidget(fw);
     setCentralWidget(fw);

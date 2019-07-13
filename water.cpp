@@ -36,7 +36,7 @@ void Water::AddBacteria(int x,int y,int energy,Bacteria* parent){
     battle_field.Get(x,y).push_back(backt.get());
 }
 int Water::HowMuchSunEnergy(int depth){
-    int energy = 12-depth;
+    int energy = 30-depth;
     if(energy<0){
         energy=0;
     }
@@ -46,10 +46,11 @@ void Water::UpdateView(int display_method){
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             QColor res;
-            if(food_field.Get(i,j)!=0){
-                res = Qt::yellow;
-            }
-            else if(!battle_field.Get(i,j ).empty()){
+            //if(food_field.Get(i,j)!=0){
+            //    res = Qt::yellow;
+            //}
+            //else
+                if(!battle_field.Get(i,j ).empty()){
                 Bacteria* bact = battle_field.Get(i,j).front();
                 if(display_method==0){
                     res = bact->genome->GetColor();
@@ -60,7 +61,7 @@ void Water::UpdateView(int display_method){
                 }
             }
             else{
-                int rg = HowMuchSunEnergy(j)*10+50;
+                int rg = HowMuchSunEnergy(j)*7;
                 res = QColor(rg,rg,255);
             }
             View->Set(i,j,res);
@@ -73,10 +74,10 @@ void Water::Battle(){
         for(int j=0;j<height;j++){
             int sum_damage = 0;
             for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
-                sum_damage += (**iter).attack + 0; ////  +5
+                sum_damage += (**iter).attack + 5; ////  +5
              }
             for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
-                (**iter).energy-=(sum_damage-(**iter).attack - 0); ////  -5
+                (**iter).energy-=(sum_damage-(**iter).attack - 5); ////  -5
             }
         }
     }
@@ -115,7 +116,7 @@ void Water::Tick(){
         if((**iter).energy<=0) (**iter).Kill(true);
     }
     alive_bacteries.remove_if([](Bacteria* bact){return bact->killed;});
-    Eating();
+    //Eating();
     if(true){
         qDebug()<<"fps:"<<1000./(clock()-last_frame);
         last_frame = clock();
@@ -123,13 +124,16 @@ void Water::Tick(){
         qDebug()<<"alive:"<<alive_bacteries.size();
         int max_life_time = -1;
         int max_energy = -1;
+        int max_attack = -1;
         for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
             int lt = time-(**iter).birth_time;
             if(max_life_time<lt) max_life_time = lt;
             if(max_energy<(**iter).energy) max_energy=(**iter).energy;
+            if(max_attack<(**iter).attack) max_attack=(**iter).attack;
         }
         qDebug()<<"max_life_time:"<<max_life_time;
         qDebug()<<"max_energy:"<<max_energy;
+        qDebug()<<"max_attack:"<<max_attack;
         qDebug()<<"time:"<<time;
     }
 }

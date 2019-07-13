@@ -12,7 +12,7 @@ struct Command{
     int cmd;
     static const int offset_conut = 3;
     int offset[offset_conut];
-    static const int command_count = 11;
+    static const int command_count = 45;
     int offset_mutate_chance_10000;
     int cmd_mutate_chance_10000;
 };
@@ -42,6 +42,8 @@ public:
     void cmd_Move(Command cmd);
     void cmd_Photo(Command cmd);
     void cmd_Clone(Command cmd);
+    void cmd_LookForFood(Command cmd);
+    void cmd_EatFood(Command cmd);
     friend Water;
     friend Genome;
 };

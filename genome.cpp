@@ -21,7 +21,7 @@ int Genome::init_attack(){
     return rand()%10;
 }
 int Genome::mutate_attack(int attack){
-    return limit(attack+rand()%5-2,0,-1);
+    return limit(attack+rand()%5-2,5,-1);
 }
 bool Genome::init_clone_nearly(){
     return rand()%2;

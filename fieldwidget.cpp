@@ -20,7 +20,7 @@ FieldWidget::~FieldWidget()
 void FieldWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
-    field->UpdateView(1);
+    field->UpdateView(0);
     QPainter painter(this);
     painter.setPen(QPen(Qt::black,1));
     for(int i=0;i<field->GetWidth();i++){
