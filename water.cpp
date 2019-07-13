@@ -7,7 +7,7 @@ Water::Water(int width,int height):width(width),height(height),View(new Matrix<Q
             View->Set(i,j,Qt::blue);
             food_field.Set(i,j,0);
             if((i+j)%2==0){
-                food_field.Set(i,j,100);
+                //food_field.Set(i,j,100);
             }
         }
     }
@@ -52,13 +52,14 @@ void Water::UpdateView(){
                 res = battle_field.Get(i,j).back()->genome->GetColor();
             }
             else{
-                res = Qt::blue;
+                int rg = HowMuchSunEnergy(j)*10+50;
+                res = QColor(rg,rg,255);
             }
             View->Set(i,j,res);
         }
     }
-
 }
+
 void Water::Battle(){
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
@@ -91,6 +92,7 @@ void Water::Eating(){
         }
     }
 }
+
 void Water::Tick(){
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         (**iter).Tick();
@@ -102,5 +104,6 @@ void Water::Tick(){
         if((**iter).energy<=0) (**iter).Kill();
     }
     Eating();
-
+    qDebug()<<"fps:"<<1000./(clock()-last_frame);
+    last_frame = clock();
 }

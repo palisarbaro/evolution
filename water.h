@@ -9,7 +9,7 @@
 #include"matrix.h"
 #include"bacteria.h"
 #include"fieldwidget.h"
-
+#include<ctime>
 class Bacteria;
 class FieldWidget;
 class Water
@@ -21,6 +21,7 @@ protected:
     std::list<std::shared_ptr<Bacteria>> alive_bacteries;
     Matrix<std::list<Bacteria*>> battle_field;
     Matrix<unsigned int> food_field;
+    clock_t last_frame;
 public:
     Water(int width,int height);
     int GetHeight();

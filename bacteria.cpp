@@ -7,15 +7,16 @@ Bacteria::Bacteria(Water* water,int x,int y,int energy,const Bacteria* parent):w
 void Bacteria::Tick(){
     spent_energy = 0;
     if(rand()%2==1){
-        TryMove(1,0);
+        TryMove(rand()%3-1,0);
     }
     else{
-        TryMove(-1,0);
+        TryMove(0,rand()%3-1);
     }
+    Photosynthesis();
     if(energy>100){
         Clone();
     }
-    spent_energy = 1;
+    spent_energy+=attack/5;
 }
 void Bacteria::TryMove(int dx, int dy){
     water->battle_field.Get(x,y).remove(this);
@@ -33,11 +34,12 @@ void Bacteria::TryMove(int dx, int dy){
             throw;
         }
     }
+    spent_energy = dx*dx+dy*dy;
 }
 void Bacteria::Kill(){
     water->battle_field.Get(x,y).remove(this);
     water->alive_bacteries.remove(std::shared_ptr<Bacteria>(this));
-    water->food_field.Get(x,y)+=10;
+    water->food_field.Get(x,y)+=20;
 }
 
 void Bacteria::Clone(){
@@ -49,4 +51,9 @@ void Bacteria::Clone(){
     }
     water->AddBacteria(limit(x+dx,0,water->width-1),limit(y+dy,0,water->height-1),energy/2,this);
     energy/=2;
+}
+
+void Bacteria::Photosynthesis(){
+    energy+=water->HowMuchSunEnergy(y)/water->battle_field.Get(x,y).size();
+    spent_energy+=3;
 }

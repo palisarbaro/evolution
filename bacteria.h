@@ -24,6 +24,7 @@ public:
     void TryMove(int dx,int dy);
     void Kill();
     void Clone();
+    void Photosynthesis();
     friend Water;
     friend Genome;
 };

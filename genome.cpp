@@ -18,7 +18,7 @@ QColor Genome::mutate_color(QColor color){
     return QColor(r,g,b);
 }
 int Genome::init_attack(){
-    return rand()%25;
+    return rand()%10;
 }
 int Genome::mutate_attack(int attack){
     return limit(attack+rand()%5-2,0,-1);
