@@ -9,8 +9,9 @@ FieldWidget::FieldWidget(int sqrSize,std::shared_ptr<Water> field,QWidget *paren
     field->AddBacteria(10,4,100);
 }
 void FieldWidget::slotTimer(){
-    field->Tick();
+    field->Tick(); 
     update(0,0,width(),height());
+
 }
 FieldWidget::~FieldWidget()
 {
@@ -19,7 +20,7 @@ FieldWidget::~FieldWidget()
 void FieldWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
-    field->UpdateView();
+    field->UpdateView(1);
     QPainter painter(this);
     painter.setPen(QPen(Qt::black,1));
     for(int i=0;i<field->GetWidth();i++){

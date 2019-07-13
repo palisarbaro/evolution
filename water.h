@@ -15,10 +15,11 @@ class FieldWidget;
 class Water
 {
 protected:
+    int time;
     int width,height;
     std::shared_ptr<Matrix<QColor>> View;
-    std::vector<std::shared_ptr<Bacteria>> all_bacteries;
-    std::list<std::shared_ptr<Bacteria>> alive_bacteries;
+    std::list<std::shared_ptr<Bacteria>> all_bacteries;
+    std::list<Bacteria*> alive_bacteries;
     Matrix<std::list<Bacteria*>> battle_field;
     Matrix<unsigned int> food_field;
     clock_t last_frame;
@@ -27,7 +28,7 @@ public:
     int GetHeight();
     int GetWidth();
     void AddBacteria(int x,int y,int energy,Bacteria* parent=nullptr);
-    void UpdateView();
+    void UpdateView(int display_method);
     void Tick();
     void Battle();
     void Eating();

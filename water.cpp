@@ -1,13 +1,14 @@
 #include "water.h"
+#include "lib.h"
 #include <QDebug>
-Water::Water(int width,int height):width(width),height(height),View(new Matrix<QColor>(width,height)),battle_field(width,height),food_field(width,height)
+Water::Water(int width,int height):time(0),width(width),height(height),View(new Matrix<QColor>(width,height)),battle_field(width,height),food_field(width,height)
 {
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             View->Set(i,j,Qt::blue);
             food_field.Set(i,j,0);
-            if((i+j)%2==0){
-                //food_field.Set(i,j,100);
+            if((i+j)%2==0 && j<50){
+                food_field.Set(i,j,100);
             }
         }
     }
@@ -30,7 +31,7 @@ void Water::AddBacteria(int x,int y,int energy,Bacteria* parent){
     std::shared_ptr<Bacteria> backt(new Bacteria(this,x,y,energy,parent));
 
     all_bacteries.push_back(backt);
-    alive_bacteries.push_back(backt);
+    alive_bacteries.push_back(backt.get());
 
     battle_field.Get(x,y).push_back(backt.get());
 }
@@ -41,7 +42,7 @@ int Water::HowMuchSunEnergy(int depth){
     }
     return energy;
 }
-void Water::UpdateView(){
+void Water::UpdateView(int display_method){
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             QColor res;
@@ -49,7 +50,14 @@ void Water::UpdateView(){
                 res = Qt::yellow;
             }
             else if(!battle_field.Get(i,j ).empty()){
-                res = battle_field.Get(i,j).back()->genome->GetColor();
+                Bacteria* bact = battle_field.Get(i,j).front();
+                if(display_method==0){
+                    res = bact->genome->GetColor();
+                }
+                else if(display_method==1){
+                    int val = limit(bact->energy,0,255);
+                    res = QColor(val,val,val);
+                }
             }
             else{
                 int rg = HowMuchSunEnergy(j)*10+50;
@@ -65,10 +73,10 @@ void Water::Battle(){
         for(int j=0;j<height;j++){
             int sum_damage = 0;
             for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
-                sum_damage += (**iter).attack;
-            }
+                sum_damage += (**iter).attack + 0; ////  +5
+             }
             for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
-                (**iter).energy-=(sum_damage-(**iter).attack);
+                (**iter).energy-=(sum_damage-(**iter).attack - 0); ////  -5
             }
         }
     }
@@ -94,16 +102,34 @@ void Water::Eating(){
 }
 
 void Water::Tick(){
+    all_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->killed;});
+    time++;
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         (**iter).Tick();
         (**iter).energy-=(**iter).spent_energy;
-        if((**iter).energy<=0) (**iter).Kill();
+        if((**iter).energy<=0) (**iter).Kill(true);
     }
+    alive_bacteries.remove_if([](Bacteria* bact){return bact->killed;});
     Battle();
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
-        if((**iter).energy<=0) (**iter).Kill();
+        if((**iter).energy<=0) (**iter).Kill(true);
     }
+    alive_bacteries.remove_if([](Bacteria* bact){return bact->killed;});
     Eating();
-    qDebug()<<"fps:"<<1000./(clock()-last_frame);
-    last_frame = clock();
+    if(true){
+        qDebug()<<"fps:"<<1000./(clock()-last_frame);
+        last_frame = clock();
+        qDebug()<<"all:"<<all_bacteries.size();
+        qDebug()<<"alive:"<<alive_bacteries.size();
+        int max_life_time = -1;
+        int max_energy = -1;
+        for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
+            int lt = time-(**iter).birth_time;
+            if(max_life_time<lt) max_life_time = lt;
+            if(max_energy<(**iter).energy) max_energy=(**iter).energy;
+        }
+        qDebug()<<"max_life_time:"<<max_life_time;
+        qDebug()<<"max_energy:"<<max_energy;
+        qDebug()<<"time:"<<time;
+    }
 }

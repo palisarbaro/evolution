@@ -4,7 +4,7 @@ QColor Genome::GetColor(){
     return color;
 }
 int mutate_color_component(int c){
-    c += rand()%5-2;
+    c += rand()%11-5;
     c = limit(c,0,255);
     return c;
 }
@@ -32,16 +32,84 @@ bool Genome::mutate_clone_nearly(bool clone_nearly){
     }
     return clone_nearly;
 }
+
+void Genome::Irradiate(int percent)
+{
+    int full_change_1000 = percent/10;
+    if(rand()%100<percent){
+        color = mutate_color(color);
+    }
+    if(rand()%100<percent){
+        attack = mutate_attack(attack);
+    }
+    if(rand()%100<percent){
+        clone_nearly = mutate_clone_nearly(clone_nearly);
+    }
+    if(rand()%100<percent){
+        code = mutate_code(code);
+    }
+    /////
+    if(rand()%1000<full_change_1000){
+        attack = init_attack();
+    }
+    for(auto iter = code.begin();iter!=code.end();iter++){
+        if(rand()%1000<full_change_1000){
+            (*iter).cmd_mutate_chance_10000 = rand()%10000;
+        }
+        if(rand()%1000<full_change_1000){
+            (*iter).offset_mutate_chance_10000 = rand()%10000;
+        }
+    }
+
+
+
+
+}
+Command mutate_command(Command cmd){
+    if(rand()%10000<cmd.cmd_mutate_chance_10000){
+        cmd.cmd = rand()%Command::command_count;
+    }
+    cmd.cmd_mutate_chance_10000+=rand()%3-1;
+    for(int i=0;i<Command::offset_conut;i++){
+        if(rand()%10000<cmd.offset_mutate_chance_10000){
+            cmd.offset[i] += rand()%13-6;
+        }
+    }
+    cmd.offset_mutate_chance_10000+=rand()%11-5;
+
+    return cmd;
+}
+std::vector<Command> Genome::init_code(){
+    for(int i=0;i<code_length;i++){
+        Command cmd;
+        cmd.cmd_mutate_chance_10000 = rand()%10000;
+        cmd.offset_mutate_chance_10000 = rand()%10000;
+        cmd.cmd = rand()%Command::command_count;
+        for(int i=0;i<Command::offset_conut;i++){
+            cmd.offset[i]=limit(rand()%64,0,code_length-1);
+        }
+        code.push_back(cmd);
+    }
+    return code;
+}
+std::vector<Command> Genome::mutate_code(std::vector<Command> code){
+    for(unsigned int i=0;i<code_length;i++){
+        code.at(i) = mutate_command(code.at(i));
+    }
+    return code;
+}
 Genome::Genome(Bacteria* bacteira,const Bacteria* parent): bacteria(bacteira)
 {
     if(parent!=nullptr){
         color = mutate_color(parent->genome->color);
         attack = mutate_attack(parent->genome->attack);
         clone_nearly = mutate_clone_nearly(parent->genome->clone_nearly);
+        code = mutate_code(parent->genome->code);
     }
     else{
         color = init_color();
         attack = init_attack();
         clone_nearly = init_clone_nearly();
+        code = init_code();
     }
 }
