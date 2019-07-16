@@ -34,12 +34,12 @@ enum Actions{
 class Bacteria
 {
 protected:
-    Water* water;
+    std::weak_ptr<Water> water;
     std::shared_ptr<Genome> genome;
+    std::weak_ptr<Bacteria> self;
     uint16_t x,y;
     int32_t energy;
     uint16_t attack;
-    const Bacteria* parent;
     uint64_t birth_time;
     int16_t cmd_ptr = 0;
     bool stop_action;
@@ -47,10 +47,10 @@ protected:
     uint8_t killer = 0;
     uint32_t atp = 0;
 public:
-    Bacteria(Water* water, uint16_t x, uint16_t y,int32_t energy,const Bacteria* parent);
+    Bacteria(std::weak_ptr<Water> water, uint16_t x, uint16_t y,int32_t energy,std::weak_ptr<Bacteria> parent);
     void Tick();
     void TryMove(int8_t dx,int8_t dy);
-    void Kill(bool in_cycle=false);
+    void Kill();
     void Clone();
     void Photosynthesis();
     void DoAction();
@@ -74,5 +74,6 @@ public:
     void IncreaseEnergy(int32_t added_energy);
     uint8_t GetKiller();
     bool GetKilled();
+    void SetSelf(std::weak_ptr<Bacteria> bact);
 };
 

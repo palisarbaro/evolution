@@ -24,6 +24,11 @@ const std::vector<Command> &Genome::GetCode()
     return code;
 }
 
+void Genome::SetBacteria(std::weak_ptr<Bacteria> bact)
+{
+    bacteria=bact;
+}
+
 int mutate_color_component(int c){
     return mutate(c,0,255,5);
 }
@@ -123,13 +128,13 @@ std::vector<Command> Genome::mutate_code(std::vector<Command> code){
     }
     return code;
 }
-Genome::Genome(Bacteria* bacteira,const Bacteria* parent): bacteria(bacteira)
+Genome::Genome(std::weak_ptr<Bacteria> parent)
 {
-    if(parent!=nullptr){
-        color = mutate_color(parent->GetGenome()->color);
-        attack = mutate_attack(parent->GetGenome()->attack);
-        clone_nearly = mutate_clone_nearly(parent->GetGenome()->clone_nearly);
-        code = mutate_code(parent->GetGenome()->code);
+    if(!parent.expired()){
+        color = mutate_color(parent.lock()->GetGenome()->color);
+        attack = mutate_attack(parent.lock()->GetGenome()->attack);
+        clone_nearly = mutate_clone_nearly(parent.lock()->GetGenome()->clone_nearly);
+        code = mutate_code(parent.lock()->GetGenome()->code);
     }
     else{
         color = init_color();

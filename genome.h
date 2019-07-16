@@ -15,11 +15,11 @@ protected:
     QColor color;
     uint16_t attack;
     bool clone_nearly;
-    Bacteria* bacteria;
+    std::weak_ptr<Bacteria> bacteria;
     std::vector<Command> code;
 public:
     static constexpr uint16_t code_length = 64;
-    Genome(Bacteria* bacteria,const Bacteria* parent=nullptr);
+    Genome(std::weak_ptr<Bacteria> parent=std::weak_ptr<Bacteria>());
     QColor init_color();
     QColor mutate_color(QColor color);
     uint16_t init_attack();
@@ -34,4 +34,5 @@ public:
     bool GetCloneNearly();
     uint16_t GetMaxEnergy();
     const std::vector<Command>& GetCode();
+    void SetBacteria(std::weak_ptr<Bacteria> bact);
 };

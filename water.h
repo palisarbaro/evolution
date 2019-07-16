@@ -19,15 +19,16 @@ protected:
     uint16_t width,height;
     std::shared_ptr<Matrix<QColor>> View;
     std::list<std::shared_ptr<Bacteria>> all_bacteries;
-    std::list<Bacteria*> alive_bacteries;
-    Matrix<std::list<Bacteria*>> battle_field;
+    std::list<std::shared_ptr<Bacteria>> alive_bacteries;
+    Matrix<std::list<std::shared_ptr<Bacteria>>> battle_field;
     Matrix<uint16_t> food_field;
     clock_t last_frame;
+    std::weak_ptr<Water> self;
 public:
     Water(uint16_t width,uint16_t height);
     uint16_t GetHeight();
     uint16_t GetWidth();
-    void AddBacteria(uint16_t x,uint16_t y,int32_t energy,Bacteria* parent=nullptr);
+    void AddBacteria(uint16_t x,uint16_t y,int32_t energy,std::weak_ptr<Bacteria> parent=std::weak_ptr<Bacteria>());
     void UpdateView(uint8_t display_method);
     void Tick();
     void Battle();
@@ -38,6 +39,7 @@ public:
     uint64_t GetTime();
     std::shared_ptr<Matrix<QColor>> GetView();
     Matrix<uint16_t>& GetFoodField();
-    Matrix<std::list<Bacteria*>>& GetBattleField();
-    std::list<Bacteria*>& GetAliveBacteries();
+    Matrix<std::list<std::shared_ptr<Bacteria>>>& GetBattleField();
+    std::list<std::shared_ptr<Bacteria>>& GetAliveBacteries();
+    void SetSelf(std::weak_ptr<Water> i);
 };

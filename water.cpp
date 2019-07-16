@@ -1,7 +1,13 @@
 #include "water.h"
 #include "lib.h"
 #include <QDebug>
-Water::Water(uint16_t width,uint16_t height):time(0),width(width),height(height),View(new Matrix<QColor>(width,height)),battle_field(width,height),food_field(width,height)
+Water::Water(uint16_t width,uint16_t height)
+    :time(0),
+    width(width),
+    height(height),
+    View(new Matrix<QColor>(width,height)),
+    battle_field(width,height),
+    food_field(width,height)
 {
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
@@ -35,25 +41,29 @@ Matrix<uint16_t> &Water::GetFoodField()
     return food_field;
 }
 
-Matrix<std::list<Bacteria *> > &Water::GetBattleField()
+Matrix<std::list<std::shared_ptr<Bacteria >> > &Water::GetBattleField()
 {
     return battle_field;
 }
 
-std::list<Bacteria *> &Water::GetAliveBacteries()
+std::list<std::shared_ptr<Bacteria>> &Water::GetAliveBacteries()
 {
     return alive_bacteries;
 }
-void Water::AddBacteria(uint16_t x,uint16_t y,int32_t energy,Bacteria* parent){
+
+void Water::SetSelf(std::weak_ptr<Water> i)
+{
+    self = i;
+}
+void Water::AddBacteria(uint16_t x,uint16_t y,int32_t energy,std::weak_ptr<Bacteria> parent){
     if(!battle_field.isCoordinatesCorrect(x,y)){
         throw IMPOSSIBLE;
     }
-    std::shared_ptr<Bacteria> backt(new Bacteria(this,x,y,energy,parent));
-
+    std::shared_ptr<Bacteria> backt(new Bacteria(self,x,y,energy,parent));
+    backt->SetSelf(backt);
     all_bacteries.push_back(backt);
-    alive_bacteries.push_back(backt.get());
-
-    battle_field.Get(x,y).push_back(backt.get());
+    alive_bacteries.push_back(backt);
+    battle_field.Get(x,y).push_back(backt);
 }
 int32_t Water::HowMuchSunEnergy(uint16_t depth){
     int max = 40+sin(2*3.14*time/800.)*35;
@@ -71,7 +81,7 @@ void Water::UpdateView(uint8_t display_method){
                 res = Qt::yellow;
             }
             else if(!battle_field.Get(i,j ).empty()){
-                Bacteria* bact = battle_field.Get(i,j).front();
+                std::shared_ptr<Bacteria> bact = battle_field.Get(i,j).front();
                 if(display_method==0){
                    res = bact->GetGenome()->GetColor();
                 }
@@ -132,14 +142,14 @@ void Water::Tick(){
     time++;
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         (**iter).Tick();
-        if((**iter).GetEnergy()<=0) (**iter).Kill(true);
+        if((**iter).GetEnergy()<=0) (**iter).Kill();
     }
-    alive_bacteries.remove_if([](Bacteria* bact){return bact->GetKilled();});
+    alive_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->GetKilled();});
     Battle();
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
-        if((**iter).GetEnergy()<=0) (**iter).Kill(true);
+        if((**iter).GetEnergy()<=0) (**iter).Kill();
     }
-    alive_bacteries.remove_if([](Bacteria* bact){return bact->GetKilled();});
+    alive_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->GetKilled();});
     //Eating();
     if(true){
         qDebug()<<"fps:"<<1000./(clock()-last_frame);
