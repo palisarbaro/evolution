@@ -1,6 +1,6 @@
 #include "bacteria.h"
 #include "lib.h"
-Bacteria::Bacteria(Water* water,int x,int y,int energy,const Bacteria* parent)
+Bacteria::Bacteria(Water* water,uint16_t x,uint16_t y,int32_t energy,const Bacteria* parent)
     :water(water),
     genome(new Genome(this,parent)),
     x(x),
@@ -24,10 +24,10 @@ void Bacteria::Tick(){
     }
     energy-=attack/5;
 }
-void Bacteria::TryMove(int dx, int dy){
+void Bacteria::TryMove(int8_t dx, int8_t dy){
     water->GetBattleField().Get(x,y).remove(this);
-    int X = x + dx;
-    int Y = y + dy;
+    uint16_t X = x + dx;
+    uint16_t Y = y + dy;
     try {
         X = loop(X,water->GetWidth());
         water->GetBattleField().Get(X,Y).push_back(this);
@@ -64,7 +64,7 @@ void Bacteria::Clone(){
 }
 
 void Bacteria::Photosynthesis(){
-    energy+=water->HowMuchSunEnergy(y)/water->GetBattleField().Get(x,y).size();
+    energy+=water->HowMuchSunEnergy(y)/static_cast<int>(water->GetBattleField().Get(x,y).size());
     energy-=3;
 }
 
@@ -97,7 +97,7 @@ void Bacteria::DoAction()
     }
 }
 
-void TransformToCoordinates(int &x,int &y, int d,int size=1){
+void TransformToCoordinates(int8_t &x,int8_t &y, uint8_t d,uint8_t size=1){
     x = d%(2*size+1)-size;
     y = d/(2*size+1)-size;
 }
@@ -110,7 +110,7 @@ void Bacteria::cmd_Move(Command cmd)
     counter++;
     COUNT_OF_ACTION++;
     stop_action=true;
-    int dx,dy;
+    int8_t dx,dy;
     TransformToCoordinates(dx,dy,cmd.cmd-0);
     TryMove(dx,dy);
     cmd_ptr += cmd.offset[0];
@@ -144,7 +144,7 @@ void Bacteria::cmd_LookForFood(Command cmd)
     static int counter = 0;
     counter++;
     COUNT_OF_ACTION++;
-    int dx,dy;
+    int8_t dx,dy;
     TransformToCoordinates(dx,dy,cmd.cmd-11,2);
     int off = -1000;
     try {
@@ -171,10 +171,10 @@ void Bacteria::cmd_EatFood(Command cmd)
     static int counter = 0;
     counter++;
     COUNT_OF_ACTION++;
-    int dx,dy;
+    int8_t dx,dy;
     TransformToCoordinates(dx,dy,cmd.cmd-36,1);
     try {
-        unsigned int& food = water->GetFoodField().Get(x+dx,y+dy);
+        uint16_t& food = water->GetFoodField().Get(x+dx,y+dy);
         atp+=food;
         food=0;
     } catch (int e) {
@@ -197,7 +197,7 @@ void Bacteria::cmd_LookForEnemy(Command cmd)
     static int counter = 0;
     counter++;
     COUNT_OF_ACTION++;
-    int dx,dy;
+    int8_t dx,dy;
     TransformToCoordinates(dx,dy,cmd.cmd-45,2);
     int off = 1;
     try {
@@ -252,7 +252,7 @@ void Bacteria::cmd_LookForFriend(Command cmd)
     static int counter = 0;
     counter++;
     COUNT_OF_ACTION++;
-    int dx,dy;
+    int8_t dx,dy;
     TransformToCoordinates(dx,dy,cmd.cmd-72,2);
     int off = 1;
     try {
@@ -281,7 +281,7 @@ void Bacteria::cmd_Attack(Command cmd)
     counter++;
     killer++;
     COUNT_OF_ACTION++;
-    int dx,dy;
+    int8_t dx,dy;
     TransformToCoordinates(dx,dy,cmd.cmd-97,1);
     try {
         for(auto iter=water->GetBattleField().Get(x+dx,y+dy).begin();iter!=water->GetBattleField().Get(x+dx,y+dy).end();iter++){
@@ -315,33 +315,33 @@ std::shared_ptr<Genome> Bacteria::GetGenome() const
     return genome;
 }
 
-void Bacteria::GetCoords(int &X, int &Y)
+void Bacteria::GetCoords(uint16_t &X, uint16_t &Y)
 {
     X=x;
     Y=y;
 }
 
-int Bacteria::GetEnergy()
+int32_t Bacteria::GetEnergy()
 {
     return energy;
 }
 
-int Bacteria::GetBirthTime()
+uint64_t Bacteria::GetBirthTime()
 {
     return birth_time;
 }
 
-int Bacteria::GetAttack()
+uint16_t Bacteria::GetAttack()
 {
     return attack;
 }
 
-void Bacteria::IncreaseEnergy(int added_energy)
+void Bacteria::IncreaseEnergy(int32_t added_energy)
 {
     energy+=added_energy;
 }
 
-int Bacteria::GetKiller()
+uint8_t Bacteria::GetKiller()
 {
     return killer;
 }

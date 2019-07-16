@@ -1,7 +1,7 @@
 #include "water.h"
 #include "lib.h"
 #include <QDebug>
-Water::Water(int width,int height):time(0),width(width),height(height),View(new Matrix<QColor>(width,height)),battle_field(width,height),food_field(width,height)
+Water::Water(uint16_t width,uint16_t height):time(0),width(width),height(height),View(new Matrix<QColor>(width,height)),battle_field(width,height),food_field(width,height)
 {
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
@@ -14,23 +14,23 @@ Water::Water(int width,int height):time(0),width(width),height(height),View(new 
     }
 }
 
-int Water::GetWidth()
+uint16_t Water::GetWidth()
 {
     return width;
 }
-int Water::GetHeight(){
+uint16_t Water::GetHeight(){
     return height;
 }
 std::shared_ptr<Matrix<QColor>> Water::GetView(){
     return View;
 }
 
-int Water::GetTime()
+uint64_t Water::GetTime()
 {
     return time;
 }
 
-Matrix<unsigned int> &Water::GetFoodField()
+Matrix<uint16_t> &Water::GetFoodField()
 {
     return food_field;
 }
@@ -44,7 +44,7 @@ std::list<Bacteria *> &Water::GetAliveBacteries()
 {
     return alive_bacteries;
 }
-void Water::AddBacteria(int x,int y,int energy,Bacteria* parent){
+void Water::AddBacteria(uint16_t x,uint16_t y,int32_t energy,Bacteria* parent){
     if(!battle_field.isCoordinatesCorrect(x,y)){
         throw IMPOSSIBLE;
     }
@@ -55,7 +55,7 @@ void Water::AddBacteria(int x,int y,int energy,Bacteria* parent){
 
     battle_field.Get(x,y).push_back(backt.get());
 }
-int Water::HowMuchSunEnergy(int depth){
+int32_t Water::HowMuchSunEnergy(uint16_t depth){
     int max = 40+sin(2*3.14*time/800.)*35;
     int energy = max-depth;
     if(energy<0){
@@ -63,7 +63,7 @@ int Water::HowMuchSunEnergy(int depth){
     }
     return energy;
 }
-void Water::UpdateView(int display_method){
+void Water::UpdateView(uint8_t display_method){
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             QColor res;
@@ -109,7 +109,7 @@ void Water::Battle(){
 }
 void Water::Eating(){
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
-        int x,y;
+        uint16_t x,y;
         (**iter).GetCoords(x,y);
         if(food_field.Get(x,y)!=0){
             if(battle_field.Get(x,y).empty()){
@@ -128,7 +128,7 @@ void Water::Eating(){
 }
 
 void Water::Tick(){
-    if(time%500==499) forced_cloning=!forced_cloning;
+    //if(time%500==499) forced_cloning=!forced_cloning;
     all_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->GetKilled();});
     time++;
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){

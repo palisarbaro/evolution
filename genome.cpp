@@ -4,7 +4,7 @@ QColor Genome::GetColor(){
     return color;
 }
 
-int Genome::GetAttack()
+uint16_t Genome::GetAttack()
 {
     return attack;
 }
@@ -14,7 +14,7 @@ bool Genome::GetCloneNearly()
     return clone_nearly;
 }
 
-int Genome::GetMaxEnergy()
+uint16_t Genome::GetMaxEnergy()
 {
     return max_energy;
 }
@@ -37,10 +37,10 @@ QColor Genome::mutate_color(QColor color){
     int b = mutate_color_component(color.blue());
     return QColor(r,g,b);
 }
-int Genome::init_attack(){
+uint16_t Genome::init_attack(){
     return rand()%10;
 }
-int Genome::mutate_attack(int attack){
+uint16_t Genome::mutate_attack(uint16_t attack){
     return limit(attack+rand()%5-2,5,-1);
 }
 bool Genome::init_clone_nearly(){
@@ -53,7 +53,7 @@ bool Genome::mutate_clone_nearly(bool clone_nearly){
     return clone_nearly;
 }
 
-void Genome::Irradiate(int percent)
+void Genome::Irradiate(uint8_t percent)
 {
     int full_change_1000 = percent/10;
     if(rand()%100<percent){

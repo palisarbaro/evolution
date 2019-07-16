@@ -12,12 +12,12 @@ class FieldWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit FieldWidget(int sqr_size,std::shared_ptr<Water> field,QWidget *parent = nullptr);
+    explicit FieldWidget(uint8_t sqr_size,std::shared_ptr<Water> field,QWidget *parent = nullptr);
     ~FieldWidget();
 protected:
     std::shared_ptr<Water> field;
     void paintEvent(QPaintEvent* e);
-    int sqr_size;
+    uint8_t sqr_size;
     QTimer* timer;
 private slots:
     void slotTimer();

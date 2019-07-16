@@ -1,5 +1,5 @@
 #include "fieldwidget.h"
-FieldWidget::FieldWidget(int sqrSize,std::shared_ptr<Water> field,QWidget *parent) : QWidget(parent), field(field),sqr_size(sqrSize)
+FieldWidget::FieldWidget(uint8_t sqrSize,std::shared_ptr<Water> field,QWidget *parent) : QWidget(parent), field(field),sqr_size(sqrSize)
 {
     setFixedSize(sqrSize*field->GetWidth(),sqrSize*field->GetHeight());
     timer = new QTimer();
@@ -21,7 +21,7 @@ FieldWidget::~FieldWidget()
 void FieldWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
-    field->UpdateView(1);
+    field->UpdateView(0);
     QPainter painter(this);
     painter.setPen(QPen(Qt::black,1));
     for(int i=0;i<field->GetWidth();i++){

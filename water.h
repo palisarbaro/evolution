@@ -15,29 +15,29 @@ class FieldWidget;
 class Water
 {
 protected:
-    int time;
-    int width,height;
+    uint64_t time;
+    uint16_t width,height;
     std::shared_ptr<Matrix<QColor>> View;
     std::list<std::shared_ptr<Bacteria>> all_bacteries;
     std::list<Bacteria*> alive_bacteries;
     Matrix<std::list<Bacteria*>> battle_field;
-    Matrix<unsigned int> food_field;
+    Matrix<uint16_t> food_field;
     clock_t last_frame;
 public:
-    Water(int width,int height);
-    int GetHeight();
-    int GetWidth();
-    void AddBacteria(int x,int y,int energy,Bacteria* parent=nullptr);
-    void UpdateView(int display_method);
+    Water(uint16_t width,uint16_t height);
+    uint16_t GetHeight();
+    uint16_t GetWidth();
+    void AddBacteria(uint16_t x,uint16_t y,int32_t energy,Bacteria* parent=nullptr);
+    void UpdateView(uint8_t display_method);
     void Tick();
     void Battle();
     void Eating();
-    int HowMuchSunEnergy(int depth);
+    int32_t HowMuchSunEnergy(uint16_t depth);
     bool forced_cloning = true;
 
-    int GetTime();
+    uint64_t GetTime();
     std::shared_ptr<Matrix<QColor>> GetView();
-    Matrix<unsigned int>& GetFoodField();
+    Matrix<uint16_t>& GetFoodField();
     Matrix<std::list<Bacteria*>>& GetBattleField();
     std::list<Bacteria*>& GetAliveBacteries();
 };
