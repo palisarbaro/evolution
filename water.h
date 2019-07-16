@@ -33,8 +33,11 @@ public:
     void Battle();
     void Eating();
     int HowMuchSunEnergy(int depth);
-    std::shared_ptr<Matrix<QColor>> GetView();
     bool forced_cloning = true;
-    friend Bacteria;
-    friend FieldWidget;
+
+    int GetTime();
+    std::shared_ptr<Matrix<QColor>> GetView();
+    Matrix<unsigned int>& GetFoodField();
+    Matrix<std::list<Bacteria*>>& GetBattleField();
+    std::list<Bacteria*>& GetAliveBacteries();
 };

@@ -28,7 +28,7 @@ void FieldWidget::paintEvent(QPaintEvent *e)
         for(int j=0;j<field->GetHeight();j++){
             int x = sqr_size*i;
             int y = sqr_size*j;
-            painter.setBrush(QBrush(field->View->Get(i,j)));
+            painter.setBrush(QBrush(field->GetView()->Get(i,j)));
             painter.drawRect(x,y,sqr_size,sqr_size);
         }
     }

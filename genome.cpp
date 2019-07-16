@@ -3,6 +3,26 @@
 QColor Genome::GetColor(){
     return color;
 }
+
+int Genome::GetAttack()
+{
+    return attack;
+}
+
+bool Genome::GetCloneNearly()
+{
+    return clone_nearly;
+}
+
+int Genome::GetMaxEnergy()
+{
+    return max_energy;
+}
+
+const std::vector<Command> &Genome::GetCode()
+{
+    return code;
+}
 int mutate_color_component(int c){
     c += rand()%11-5;
     c = limit(c,0,255);
@@ -103,10 +123,10 @@ std::vector<Command> Genome::mutate_code(std::vector<Command> code){
 Genome::Genome(Bacteria* bacteira,const Bacteria* parent): bacteria(bacteira)
 {
     if(parent!=nullptr){
-        color = mutate_color(parent->genome->color);
-        attack = mutate_attack(parent->genome->attack);
-        clone_nearly = mutate_clone_nearly(parent->genome->clone_nearly);
-        code = mutate_code(parent->genome->code);
+        color = mutate_color(parent->GetGenome()->color);
+        attack = mutate_attack(parent->GetGenome()->attack);
+        clone_nearly = mutate_clone_nearly(parent->GetGenome()->clone_nearly);
+        code = mutate_code(parent->GetGenome()->code);
     }
     else{
         color = init_color();

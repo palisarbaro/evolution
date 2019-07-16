@@ -20,10 +20,10 @@ class Bacteria
 {
 protected:
     Water* water;
+    std::shared_ptr<Genome> genome;
     int x,y;
     int energy;
     int attack;
-    std::shared_ptr<Genome> genome;
     const Bacteria* parent;
     int birth_time;
     int cmd_ptr = 0;
@@ -51,7 +51,14 @@ public:
     void cmd_LookForFriend(Command cmd);
     void cmd_Attack(Command cmd);
     void cmd_HowMuchEnergy(Command cmd);
-    friend Water;
-    friend Genome;
+
+    std::shared_ptr<Genome> GetGenome() const;
+    void GetCoords(int &X,int &Y);
+    int GetEnergy();
+    int GetBirthTime();
+    int GetAttack();
+    void IncreaseEnergy(int added_energy);
+    int GetKiller();
+    bool GetKilled();
 };
 

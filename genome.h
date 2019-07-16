@@ -30,5 +30,8 @@ public:
     std::vector<Command> init_code();
     std::vector<Command> mutate_code(std::vector<Command> code);
     QColor GetColor();
-    friend Bacteria;
+    int GetAttack();
+    bool GetCloneNearly();
+    int GetMaxEnergy();
+    const std::vector<Command>& GetCode();
 };
