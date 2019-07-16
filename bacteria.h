@@ -10,13 +10,27 @@ class Water;
 class Genome;
 struct Command{
     uint8_t cmd;
-    //uint8_t param;
+    uint16_t param;
     static constexpr uint8_t offset_conut = 3;
     int16_t offset[offset_conut];
-    static constexpr int command_count = 126;
     uint16_t offset_mutate_chance_10000;
     uint16_t cmd_mutate_chance_10000;
 };
+enum Actions{
+    move = 0,
+    photo = 1,
+    clone = 2,
+    lffood = 3,
+    eat_food = 4,
+    lfenemy = 5,
+    suicide = 6,
+    convert_atp = 7,
+    lffriend = 8,
+    attack = 9,
+    hme = 10,
+    count_of_actions = 11
+};
+
 class Bacteria
 {
 protected:
@@ -28,7 +42,6 @@ protected:
     const Bacteria* parent;
     uint64_t birth_time;
     int16_t cmd_ptr = 0;
-    uint8_t COUNT_OF_ACTION = 0;
     bool stop_action;
     bool killed = false;
     uint8_t killer = 0;

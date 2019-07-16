@@ -23,10 +23,9 @@ const std::vector<Command> &Genome::GetCode()
 {
     return code;
 }
+
 int mutate_color_component(int c){
-    c += rand()%11-5;
-    c = limit(c,0,255);
-    return c;
+    return mutate(c,0,255,5);
 }
 QColor Genome::init_color(){
     return QColor(rand()%256,rand()%256,rand()%256);
@@ -41,7 +40,7 @@ uint16_t Genome::init_attack(){
     return rand()%10;
 }
 uint16_t Genome::mutate_attack(uint16_t attack){
-    return limit(attack+rand()%5-2,5,-1);
+    return mutate(attack,10,-1,2);
 }
 bool Genome::init_clone_nearly(){
     return rand()%2;
@@ -87,15 +86,18 @@ void Genome::Irradiate(uint8_t percent)
 }
 Command mutate_command(Command cmd){
     if(rand()%10000<cmd.cmd_mutate_chance_10000){
-        cmd.cmd = rand()%Command::command_count;
+        cmd.cmd = rand()%Actions::count_of_actions;
     }
-    cmd.cmd_mutate_chance_10000+=rand()%3-1;
+    if(rand()%10000<cmd.cmd_mutate_chance_10000){
+        cmd.param = mutate(cmd.param,0,UINT16_MAX,3);
+    }
+    cmd.cmd_mutate_chance_10000=mutate(cmd.cmd_mutate_chance_10000,0,10000,10);
     for(int i=0;i<Command::offset_conut;i++){
         if(rand()%10000<cmd.offset_mutate_chance_10000){
-            cmd.offset[i] += rand()%13-6;
+            cmd.offset[i] = rand()%Genome::code_length;
         }
     }
-    cmd.offset_mutate_chance_10000+=rand()%11-5;
+    cmd.offset_mutate_chance_10000=mutate(cmd.offset_mutate_chance_10000,0,10000,10);
 
     return cmd;
 }
@@ -104,9 +106,10 @@ std::vector<Command> Genome::init_code(){
         Command cmd;
         cmd.cmd_mutate_chance_10000 = rand()%10000;
         cmd.offset_mutate_chance_10000 = rand()%10000;
-        cmd.cmd = rand()%Command::command_count;
-        if(rand()%3==0) cmd.cmd = 10;
-        if(rand()%3==0) cmd.cmd = 9;
+        cmd.cmd = rand()%Actions::count_of_actions;
+        if(rand()%5==0) cmd.cmd = Actions::clone;
+        if(rand()%5==0) cmd.cmd = Actions::photo;
+        cmd.param = rand()%UINT16_MAX;
         for(int i=0;i<Command::offset_conut;i++){
             cmd.offset[i]=limit(rand()%64,0,code_length-1);
         }

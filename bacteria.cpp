@@ -49,7 +49,7 @@ void Bacteria::Kill(bool in_cycle){
         water->GetAliveBacteries().remove(this);
     }
     killed=true;
-    water->GetFoodField().Get(x,y)+=90;
+    water->GetFoodField().Get(x,y)+=0;
 }
 
 void Bacteria::Clone(){
@@ -72,25 +72,48 @@ void Bacteria::DoAction()
 {
     stop_action = false;
     for(int i=0;i<30;i++){
-        COUNT_OF_ACTION = 0;
         Command cmd = genome->GetCode().at(cmd_ptr);
         int last_ptr = cmd_ptr;
-        cmd_Move(cmd);
-        cmd_Clone(cmd);
-        cmd_Photo(cmd);
-        cmd_LookForFood(cmd);
-        cmd_EatFood(cmd);
-        cmd_LookForEnemy(cmd);
-        cmd_Suicide(cmd);
-        cmd_ConvertAtpToEnergy(cmd);
-        cmd_LookForFriend(cmd);
-        cmd_Attack(cmd);
-        cmd_HowMuchEnergy(cmd);
+        switch (cmd.cmd) {
+        case Actions::move:
+            cmd_Move(cmd);
+            break;
+        case Actions::clone:
+            cmd_Clone(cmd);
+            break;
+        case Actions::photo:
+            cmd_Photo(cmd);
+            break;
+        case Actions::lffood:
+            cmd_LookForFood(cmd);
+            break;
+        case Actions::eat_food:
+            cmd_EatFood(cmd);
+            break;
+        case Actions::lfenemy:
+            cmd_LookForEnemy(cmd);
+            break;
+        case Actions::suicide:
+            cmd_Suicide(cmd);
+            break;
+        case Actions::convert_atp:
+            cmd_ConvertAtpToEnergy(cmd);
+            break;
+        case Actions::lffriend:
+            cmd_LookForFriend(cmd);
+            break;
+        case Actions::attack:
+            cmd_Attack(cmd);
+            break;
+        case Actions::hme:
+            cmd_HowMuchEnergy(cmd);
+            break;
+        default:
+            throw IMPOSSIBLE;
+            break;
+        }
         if(last_ptr==cmd_ptr) {
             cmd_ptr++;
-        }
-        if(COUNT_OF_ACTION>1){
-            throw IMPOSSIBLE;
         }
         cmd_ptr = loop(cmd_ptr,genome->code_length-1);
         if(stop_action) break;
@@ -103,25 +126,20 @@ void TransformToCoordinates(int8_t &x,int8_t &y, uint8_t d,uint8_t size=1){
 }
 void Bacteria::cmd_Move(Command cmd)
 { 
-    if(!in_range(cmd.cmd,0,8)){
-        return;
-    }
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     stop_action=true;
     int8_t dx,dy;
-    TransformToCoordinates(dx,dy,cmd.cmd-0);
+    uint8_t position = cmd.param%9;
+    TransformToCoordinates(dx,dy,position);
     TryMove(dx,dy);
     cmd_ptr += cmd.offset[0];
 }
 
 void Bacteria::cmd_Photo(Command cmd)
 {    
-    if(cmd.cmd!=9) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     stop_action=true;
     Photosynthesis();
     cmd_ptr += cmd.offset[0];
@@ -129,10 +147,8 @@ void Bacteria::cmd_Photo(Command cmd)
 
 void Bacteria::cmd_Clone(Command cmd)
 {
-    if(cmd.cmd!=10) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     stop_action=true;
     Clone();
     cmd_ptr += cmd.offset[0];
@@ -140,12 +156,11 @@ void Bacteria::cmd_Clone(Command cmd)
 
 void Bacteria::cmd_LookForFood(Command cmd)
 {
-    if(!in_range(cmd.cmd,11,35)) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     int8_t dx,dy;
-    TransformToCoordinates(dx,dy,cmd.cmd-11,2);
+    uint8_t position = cmd.param%25;
+    TransformToCoordinates(dx,dy,position,2);
     int off = -1000;
     try {
         if(water->GetFoodField().Get(x+dx,y+dy)!=0){
@@ -167,12 +182,11 @@ void Bacteria::cmd_LookForFood(Command cmd)
 
 void Bacteria::cmd_EatFood(Command cmd)
 {
-    if(!in_range(cmd.cmd,36,44)) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     int8_t dx,dy;
-    TransformToCoordinates(dx,dy,cmd.cmd-36,1);
+    uint8_t position = cmd.param%9;
+    TransformToCoordinates(dx,dy,position);
     try {
         uint16_t& food = water->GetFoodField().Get(x+dx,y+dy);
         atp+=food;
@@ -184,25 +198,25 @@ void Bacteria::cmd_EatFood(Command cmd)
     }
     energy-=10;
 }
-bool isEnemy(QColor me,QColor other){
+bool isEnemy(QColor me,QColor other,uint16_t threshold){
     int s = 0;
     s+=abs(me.red()-other.red());
     s+=abs(me.blue()-other.blue());
     s+=abs(me.green()-other.green());
-    return s>50;
+    return s>threshold;
 }
 void Bacteria::cmd_LookForEnemy(Command cmd)
 {
-    if(!in_range(cmd.cmd,45,69)) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     int8_t dx,dy;
-    TransformToCoordinates(dx,dy,cmd.cmd-45,2);
+    uint8_t position = cmd.param%25;
+    uint16_t threshold = cmd.param;
+    TransformToCoordinates(dx,dy,position,2);
     int off = 1;
     try {
         for(auto iter=water->GetBattleField().Get(x+dx,y+dy).begin();iter!=water->GetBattleField().Get(x+dx,y+dy).end();iter++){
-            if(isEnemy(genome->GetColor(),(**iter).genome->GetColor())){
+            if(isEnemy(genome->GetColor(),(**iter).genome->GetColor(),threshold)){
                 off = 0;
                 break;
             }
@@ -221,24 +235,20 @@ void Bacteria::cmd_LookForEnemy(Command cmd)
 
 void Bacteria::cmd_Suicide(Command cmd)
 {
-    if(cmd.cmd!=70) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     stop_action=true;
-    water->GetFoodField().Get(x,y)+=2*energy;
+    water->GetFoodField().Get(x,y)+=3;
     energy=0;
 }
 
 void Bacteria::cmd_ConvertAtpToEnergy(Command cmd)
 {
-    if(cmd.cmd!=71) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
-    if(atp>200){
-        energy+=200;
-        atp-=200;
+    if(atp>cmd.param){
+        energy+=cmd.param;
+        atp-=cmd.param;
     }
     else{
         energy+=atp;
@@ -248,16 +258,16 @@ void Bacteria::cmd_ConvertAtpToEnergy(Command cmd)
 
 void Bacteria::cmd_LookForFriend(Command cmd)
 {
-    if(!in_range(cmd.cmd,72,96)) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
     int8_t dx,dy;
-    TransformToCoordinates(dx,dy,cmd.cmd-72,2);
+    uint8_t position = cmd.param%25;
+    uint16_t threshold = cmd.param;
+    TransformToCoordinates(dx,dy,position,2);
     int off = 1;
     try {
         for(auto iter=water->GetBattleField().Get(x+dx,y+dy).begin();iter!=water->GetBattleField().Get(x+dx,y+dy).end();iter++){
-            if(!isEnemy(genome->GetColor(),(**iter).genome->GetColor())){
+            if(!isEnemy(genome->GetColor(),(**iter).genome->GetColor(),threshold)){
                 off = 0;
                 break;
             }
@@ -276,33 +286,30 @@ void Bacteria::cmd_LookForFriend(Command cmd)
 
 void Bacteria::cmd_Attack(Command cmd)
 {
-    if(!in_range(cmd.cmd,97,104)) return;
     static int counter = 0;
     counter++;
     killer++;
-    COUNT_OF_ACTION++;
     int8_t dx,dy;
-    TransformToCoordinates(dx,dy,cmd.cmd-97,1);
+    uint8_t position = cmd.param%9;
+    TransformToCoordinates(dx,dy,position);
     try {
         for(auto iter=water->GetBattleField().Get(x+dx,y+dy).begin();iter!=water->GetBattleField().Get(x+dx,y+dy).end();iter++){
-            (**iter).energy-=attack;
+            (**iter).energy-=attack*2;
         }
     } catch (int e) {
         if(e!=INCORRECT_INDEX){
             throw;
         }
     }
-    energy-=10;
+    energy-=attack;
 }
 
 void Bacteria::cmd_HowMuchEnergy(Command cmd)
 {
-    if(!in_range(cmd.cmd,105,125)) return;
     static int counter = 0;
     counter++;
-    COUNT_OF_ACTION++;
-    int porog = (cmd.cmd-104)*(cmd.cmd-104)*40;
-    if(energy<porog){
+    int threshold = cmd.param;
+    if(energy<threshold){
         cmd_ptr+=cmd.offset[0];
     }
     else{

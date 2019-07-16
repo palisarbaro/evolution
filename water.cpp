@@ -67,11 +67,10 @@ void Water::UpdateView(uint8_t display_method){
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             QColor res;
-            //if(food_field.Get(i,j)!=0){
-            //    res = Qt::yellow;
-            //}
-            //else
-                if(!battle_field.Get(i,j ).empty()){
+            if(food_field.Get(i,j)!=0 && false){
+                res = Qt::yellow;
+            }
+            else if(!battle_field.Get(i,j ).empty()){
                 Bacteria* bact = battle_field.Get(i,j).front();
                 if(display_method==0){
                    res = bact->GetGenome()->GetColor();
