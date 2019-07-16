@@ -34,6 +34,7 @@ public:
     void Eating();
     int HowMuchSunEnergy(int depth);
     std::shared_ptr<Matrix<QColor>> GetView();
+    bool forced_cloning = true;
     friend Bacteria;
     friend FieldWidget;
 };

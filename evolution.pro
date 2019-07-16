@@ -31,6 +31,7 @@ SOURCES += \
         lib.cpp \
         main.cpp \
         mainwindow.cpp \
+        settings.cpp \
         water.cpp
 
 HEADERS += \
@@ -41,10 +42,11 @@ HEADERS += \
         lib.h \
         mainwindow.h \
         matrix.h \
+        settings.h \
         water.h
 
 FORMS += \
-        fieldwidget.ui \
+        form.ui \
         mainwindow.ui
 
 # Default rules for deployment.

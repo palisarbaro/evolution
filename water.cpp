@@ -36,7 +36,8 @@ void Water::AddBacteria(int x,int y,int energy,Bacteria* parent){
     battle_field.Get(x,y).push_back(backt.get());
 }
 int Water::HowMuchSunEnergy(int depth){
-    int energy = 30-depth;
+    int max = 40+sin(2*3.14*time/800.)*35;
+    int energy = max-depth;
     if(energy<0){
         energy=0;
     }
@@ -53,15 +54,19 @@ void Water::UpdateView(int display_method){
                 if(!battle_field.Get(i,j ).empty()){
                 Bacteria* bact = battle_field.Get(i,j).front();
                 if(display_method==0){
-                    res = bact->genome->GetColor();
+                   res = bact->genome->GetColor();
                 }
                 else if(display_method==1){
                     int val = limit(bact->energy,0,255);
                     res = QColor(val,val,val);
                 }
+                else if(display_method==2){
+                    int val = limit(bact->killer*10,0,255);
+                    res = QColor(val,val,0);
+                }
             }
             else{
-                int rg = HowMuchSunEnergy(j)*7;
+                int rg = HowMuchSunEnergy(j)*255/75;
                 res = QColor(rg,rg,255);
             }
             View->Set(i,j,res);
@@ -103,11 +108,11 @@ void Water::Eating(){
 }
 
 void Water::Tick(){
+    if(time%500==499) forced_cloning=!forced_cloning;
     all_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->killed;});
     time++;
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         (**iter).Tick();
-        (**iter).energy-=(**iter).spent_energy;
         if((**iter).energy<=0) (**iter).Kill(true);
     }
     alive_bacteries.remove_if([](Bacteria* bact){return bact->killed;});

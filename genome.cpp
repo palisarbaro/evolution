@@ -85,6 +85,8 @@ std::vector<Command> Genome::init_code(){
         cmd.cmd_mutate_chance_10000 = rand()%10000;
         cmd.offset_mutate_chance_10000 = rand()%10000;
         cmd.cmd = rand()%Command::command_count;
+        if(rand()%3==0) cmd.cmd = 10;
+        if(rand()%3==0) cmd.cmd = 9;
         for(int i=0;i<Command::offset_conut;i++){
             cmd.offset[i]=limit(rand()%64,0,code_length-1);
         }
