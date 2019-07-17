@@ -66,7 +66,7 @@ void Water::AddBacteria(uint16_t x,uint16_t y,int32_t energy,std::weak_ptr<Bacte
     battle_field.Get(x,y).push_back(backt);
 }
 int32_t Water::HowMuchSunEnergy(uint16_t depth){
-    int max = 40+sin(2*3.14*time/800.)*35;
+    int max = 40+sin(2*3.14*time/800.)*15;
     int energy = max-depth;
     if(energy<0){
         energy=0;
@@ -77,22 +77,22 @@ void Water::UpdateView(uint8_t display_method){
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             QColor res;
-            if(food_field.Get(i,j)!=0 && false){
-                res = Qt::yellow;
-            }
-            else if(!battle_field.Get(i,j ).empty()){
+            if(!battle_field.Get(i,j ).empty()){
                 std::shared_ptr<Bacteria> bact = battle_field.Get(i,j).front();
                 if(display_method==0){
-                   res = bact->GetGenome()->GetColor();
+                    res = bact->GetGenome()->GetColor();
                 }
                 else if(display_method==1){
                     int val = limit(bact->GetEnergy(),0,255);
                     res = QColor(val,val,val);
                 }
                 else if(display_method==2){
-                    int val = limit(bact->GetKiller()*10,0,255);
-                    res = QColor(val,val,0);
+                    int val = limit(bact->GetKiller(),0,255);
+                    res = QColor(val,0,0);
                 }
+            }
+            else if(food_field.Get(i,j)!=0 && food_display){
+                res = Qt::yellow;
             }
             else{
                 int rg = HowMuchSunEnergy(j)*255/75;
@@ -108,10 +108,10 @@ void Water::Battle(){
         for(int j=0;j<height;j++){
             int sum_damage = 0;
             for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
-                sum_damage += (**iter).GetAttack() + 5; ////  +5
+                sum_damage += (**iter).GetAttack(); ////  +5
              }
             for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
-                (**iter).IncreaseEnergy(-sum_damage + (**iter).GetAttack() + 5); ////  -5
+                (**iter).IncreaseEnergy(-sum_damage + (**iter).GetAttack()); ////  -5
             }
         }
     }
@@ -137,7 +137,7 @@ void Water::Eating(){
 }
 
 void Water::Tick(){
-    //if(time%500==499) forced_cloning=!forced_cloning;
+    if(time%500==499) forced_cloning=false;
     all_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->GetKilled();});
     time++;
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){

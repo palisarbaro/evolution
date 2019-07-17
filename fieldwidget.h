@@ -13,7 +13,8 @@ class FieldWidget : public QWidget
 
 public:
     explicit FieldWidget(uint8_t sqr_size,std::shared_ptr<Water> field,QWidget *parent = nullptr);
-    ~FieldWidget();
+    uint8_t display_method=0;
+    void SetFoodDisplay(bool display);
 protected:
     std::shared_ptr<Water> field;
     void paintEvent(QPaintEvent* e);

@@ -25,6 +25,7 @@ protected:
     clock_t last_frame;
     std::weak_ptr<Water> self;
 public:
+    bool food_display=false;
     Water(uint16_t width,uint16_t height);
     uint16_t GetHeight();
     uint16_t GetWidth();

@@ -16,7 +16,8 @@ struct Command{
     uint16_t offset_mutate_chance_10000;
     uint16_t cmd_mutate_chance_10000;
 };
-enum Actions{
+enum Actions:uint8_t
+{
     move = 0,
     photo = 1,
     clone = 2,
@@ -39,6 +40,7 @@ protected:
     std::weak_ptr<Bacteria> self;
     uint16_t x,y;
     int32_t energy;
+    int16_t hp=100;
     uint16_t attack;
     uint64_t birth_time;
     int16_t cmd_ptr = 0;
@@ -51,7 +53,7 @@ public:
     void Tick();
     void TryMove(int8_t dx,int8_t dy);
     void Kill();
-    void Clone();
+    void Clone(int8_t dx,int8_t dy);
     void Photosynthesis();
     void DoAction();
     void cmd_Move(Command cmd);
@@ -75,5 +77,7 @@ public:
     uint8_t GetKiller();
     bool GetKilled();
     void SetSelf(std::weak_ptr<Bacteria> bact);
+    int16_t GetHP();
+    void InreaceHP(int16_t added_hp);
 };
 

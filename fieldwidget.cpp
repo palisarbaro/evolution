@@ -9,19 +9,21 @@ FieldWidget::FieldWidget(uint8_t sqrSize,std::shared_ptr<Water> field,QWidget *p
         field->AddBacteria(rand()%100,rand()%50,100);
     }
 }
+
+void FieldWidget::SetFoodDisplay(bool display)
+{
+    field->food_display=display;
+}
 void FieldWidget::slotTimer(){
     field->Tick(); 
     update(0,0,width(),height());
 
 }
-FieldWidget::~FieldWidget()
-{
-}
 
 void FieldWidget::paintEvent(QPaintEvent *e)
 {
     Q_UNUSED(e);
-    field->UpdateView(2);
+    field->UpdateView(display_method);
     QPainter painter(this);
     painter.setPen(QPen(Qt::black,1));
     for(int i=0;i<field->GetWidth();i++){

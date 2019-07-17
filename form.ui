@@ -11,45 +11,71 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Настройки</string>
   </property>
-  <widget class="QRadioButton" name="radioButton">
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>181</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Режим отображения бактерий</string>
+   </property>
+   <widget class="QRadioButton" name="color_radio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>82</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Цвет</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="energy_radio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>82</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Энергия</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="aggressive_radio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>101</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Агресивность</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QCheckBox" name="food_display_checkbox">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>30</y>
-     <width>82</width>
+     <y>90</y>
+     <width>111</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Цвет</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_2">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>50</y>
-     <width>82</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Энергия</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="radioButton_3">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>70</y>
-     <width>101</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Агресивность</string>
+    <string>Отображать еду</string>
    </property>
   </widget>
  </widget>

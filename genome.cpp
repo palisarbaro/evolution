@@ -45,7 +45,7 @@ uint16_t Genome::init_attack(){
     return rand()%10;
 }
 uint16_t Genome::mutate_attack(uint16_t attack){
-    return mutate(attack,10,-1,2);
+    return mutate(attack,4,-1,2);
 }
 bool Genome::init_clone_nearly(){
     return rand()%2;
