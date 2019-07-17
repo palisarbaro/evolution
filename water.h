@@ -29,7 +29,7 @@ public:
     Water(uint16_t width,uint16_t height);
     uint16_t GetHeight();
     uint16_t GetWidth();
-    void AddBacteria(uint16_t x,uint16_t y,int32_t energy,std::weak_ptr<Bacteria> parent=std::weak_ptr<Bacteria>());
+    void AddBacteria(uint16_t x,uint16_t y,int32_t energy,int16_t hp,std::weak_ptr<Bacteria> parent=std::weak_ptr<Bacteria>());
     void UpdateView(uint8_t display_method);
     void Tick();
     void Battle();

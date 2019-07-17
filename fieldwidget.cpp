@@ -6,7 +6,7 @@ FieldWidget::FieldWidget(uint8_t sqrSize,std::shared_ptr<Water> field,QWidget *p
     connect(timer,SIGNAL(timeout()),this,SLOT(slotTimer()));
     timer->start(10);
     for(int i=0;i<15;i++){
-        field->AddBacteria(rand()%100,rand()%50,100);
+        field->AddBacteria(rand()%100,rand()%50,100,100);
     }
 }
 

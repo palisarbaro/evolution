@@ -14,7 +14,7 @@ Water::Water(uint16_t width,uint16_t height)
             View->Set(i,j,Qt::blue);
             food_field.Set(i,j,0);
             if((i+j)%2==0 && j<50){
-                food_field.Set(i,j,100);
+                food_field.Set(i,j,300);
             }
         }
     }
@@ -55,11 +55,11 @@ void Water::SetSelf(std::weak_ptr<Water> i)
 {
     self = i;
 }
-void Water::AddBacteria(uint16_t x,uint16_t y,int32_t energy,std::weak_ptr<Bacteria> parent){
+void Water::AddBacteria(uint16_t x,uint16_t y,int32_t energy,int16_t hp,std::weak_ptr<Bacteria> parent){
     if(!battle_field.isCoordinatesCorrect(x,y)){
         throw IMPOSSIBLE;
     }
-    std::shared_ptr<Bacteria> backt(new Bacteria(self,x,y,energy,parent));
+    std::shared_ptr<Bacteria> backt(new Bacteria(self,x,y,energy,hp,parent));
     backt->SetSelf(backt);
     all_bacteries.push_back(backt);
     alive_bacteries.push_back(backt);
@@ -90,6 +90,14 @@ void Water::UpdateView(uint8_t display_method){
                     int val = limit(bact->GetKiller(),0,255);
                     res = QColor(val,0,0);
                 }
+                else if(display_method==3){
+                    int val = limit(bact->GetHP(),0,255);
+                    res = QColor(val,val,val);
+                }
+                else if(display_method==4){
+                    int val = limit(battle_field.Get(i,j).size()*30,0,255);
+                    res = QColor(0,val,val);
+                }
             }
             else if(food_field.Get(i,j)!=0 && food_display){
                 res = Qt::yellow;
@@ -111,7 +119,10 @@ void Water::Battle(){
                 sum_damage += (**iter).GetAttack(); ////  +5
              }
             for (auto iter=battle_field.Get(i,j).begin();iter!=battle_field.Get(i,j).end();iter++) {
-                (**iter).IncreaseEnergy(-sum_damage + (**iter).GetAttack()); ////  -5
+                (**iter).IncreaseHP(-sum_damage + (**iter).GetAttack()); ////  -5
+                if((**iter).GetHP()>100){
+                    qDebug()<<"AAAAA";
+                }
             }
         }
     }
@@ -137,21 +148,21 @@ void Water::Eating(){
 }
 
 void Water::Tick(){
-    if(time%500==499) forced_cloning=false;
+    //if(time%500==499) forced_cloning=false;
     all_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->GetKilled();});
     time++;
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
         (**iter).Tick();
-        if((**iter).GetEnergy()<=0) (**iter).Kill();
+        if((**iter).GetHP()<=0) (**iter).Kill();
     }
     alive_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->GetKilled();});
     Battle();
     for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
-        if((**iter).GetEnergy()<=0) (**iter).Kill();
+        if((**iter).GetHP()<=0) (**iter).Kill();
     }
     alive_bacteries.remove_if([](std::shared_ptr<Bacteria> bact){return bact->GetKilled();});
     //Eating();
-    if(true){
+    if(false){
         qDebug()<<"fps:"<<1000./(clock()-last_frame);
         last_frame = clock();
         qDebug()<<"all:"<<all_bacteries.size();
@@ -159,14 +170,17 @@ void Water::Tick(){
         int max_life_time = -1;
         int max_energy = -1;
         int max_attack = -1;
+        int max_hp = -1;
         for(auto iter=alive_bacteries.begin();iter!=alive_bacteries.end();iter++){
             int lt = time-(**iter).GetBirthTime();
             if(max_life_time<lt) max_life_time = lt;
             if(max_energy<(**iter).GetEnergy()) max_energy=(**iter).GetEnergy();
+            if(max_hp<(**iter).GetHP()) max_hp=(**iter).GetHP();
             if(max_attack<(**iter).GetAttack()) max_attack=(**iter).GetAttack();
         }
         qDebug()<<"max_life_time:"<<max_life_time;
         qDebug()<<"max_energy:"<<max_energy;
+        qDebug()<<"max_hp:"<<max_hp;
         qDebug()<<"max_attack:"<<max_attack;
         qDebug()<<"time:"<<time;
     }

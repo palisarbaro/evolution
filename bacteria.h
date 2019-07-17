@@ -29,7 +29,8 @@ enum Actions:uint8_t
     lffriend = 8,
     attack = 9,
     hme = 10,
-    count_of_actions = 11
+    heal = 11,
+    count_of_actions = 12
 };
 
 class Bacteria
@@ -40,7 +41,7 @@ protected:
     std::weak_ptr<Bacteria> self;
     uint16_t x,y;
     int32_t energy;
-    int16_t hp=100;
+    int16_t hp;
     uint16_t attack;
     uint64_t birth_time;
     int16_t cmd_ptr = 0;
@@ -48,8 +49,22 @@ protected:
     bool killed = false;
     uint8_t killer = 0;
     uint32_t atp = 0;
+    static constexpr int8_t MAX_HP=100;
 public:
-    Bacteria(std::weak_ptr<Water> water, uint16_t x, uint16_t y,int32_t energy,std::weak_ptr<Bacteria> parent);
+    static int16_t move_energy;
+    static int16_t photo_enery;
+    static int16_t clone_energy;
+    static int16_t lffood_energy;
+    static int16_t eat_food_energy;
+    static int16_t lfenemy_energy;
+    static int16_t suicide_energy;
+    static int16_t convert_atp_energy;
+    static int16_t lffriend_energy;
+    static int16_t attack_energy;
+    static int16_t hme_energy;
+    static int16_t heal_energy;
+
+    Bacteria(std::weak_ptr<Water> water, uint16_t x, uint16_t y,int32_t energy,int16_t hp,std::weak_ptr<Bacteria> parent);
     void Tick();
     void TryMove(int8_t dx,int8_t dy);
     void Kill();
@@ -67,6 +82,7 @@ public:
     void cmd_LookForFriend(Command cmd);
     void cmd_Attack(Command cmd);
     void cmd_HowMuchEnergy(Command cmd);
+    void cmd_Heal(Command cmd);
 
     std::shared_ptr<Genome> GetGenome() const;
     void GetCoords(uint16_t &X,uint16_t &Y);
@@ -78,6 +94,7 @@ public:
     bool GetKilled();
     void SetSelf(std::weak_ptr<Bacteria> bact);
     int16_t GetHP();
-    void InreaceHP(int16_t added_hp);
+    void IncreaseHP(int16_t added_hp);
 };
+
 

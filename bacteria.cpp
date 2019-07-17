@@ -1,11 +1,26 @@
 #include "bacteria.h"
 #include "lib.h"
-Bacteria::Bacteria(std::weak_ptr<Water> water,uint16_t x,uint16_t y,int32_t energy,std::weak_ptr<Bacteria> parent)
+
+int16_t Bacteria::move_energy = 0;
+int16_t Bacteria:: photo_enery = 0;
+int16_t Bacteria::clone_energy= 0;
+int16_t Bacteria::lffood_energy= 0;
+int16_t Bacteria::eat_food_energy= 0;
+int16_t Bacteria::lfenemy_energy = 0;
+int16_t Bacteria::suicide_energy= 0;
+int16_t Bacteria::convert_atp_energy= 0;
+int16_t Bacteria::lffriend_energy= 0;
+int16_t Bacteria::attack_energy= 0;
+int16_t Bacteria::hme_energy= 0;
+int16_t Bacteria::heal_energy= 0;
+
+Bacteria::Bacteria(std::weak_ptr<Water> water,uint16_t x,uint16_t y,int32_t energy,int16_t hp,std::weak_ptr<Bacteria> parent)
     :water(water),
     genome(new Genome(parent)),
     x(x),
     y(y),
     energy(energy),
+    hp(hp),
     attack(genome->GetAttack()),
     birth_time(water.lock()->GetTime())
 {
@@ -29,6 +44,11 @@ void Bacteria::Tick(){
         genome->Irradiate(10);
     }
     energy-=attack/5;
+    if(energy<0){
+        hp += energy*3;
+        energy=0;
+    }
+    if(hp>MAX_HP) hp = MAX_HP;
 }
 void Bacteria::TryMove(int8_t dx, int8_t dy){
     water.lock()->GetBattleField().Get(x,y).remove(static_cast<std::shared_ptr<Bacteria>>(self));
@@ -53,12 +73,13 @@ void Bacteria::TryMove(int8_t dx, int8_t dy){
 void Bacteria::Kill(){
     water.lock()->GetBattleField().Get(x,y).remove(static_cast<std::shared_ptr<Bacteria>>(self));
     killed=true;
-    water.lock()->GetFoodField().Get(x,y)+=10;
+    water.lock()->GetFoodField().Get(x,y)+=energy;
 }
 
 void Bacteria::Clone(int8_t dx,int8_t dy){
-    water.lock()->AddBacteria(limit(x+dx,0,water.lock()->GetWidth()-1),limit(y+dy,0,water.lock()->GetHeight()-1),energy/2,self);
+    water.lock()->AddBacteria(limit(x+dx,0,water.lock()->GetWidth()-1),limit(y+dy,0,water.lock()->GetHeight()-1),energy/2,hp/2,self);
     energy/=2;
+    hp/=2;
 }
 
 void Bacteria::Photosynthesis(){
@@ -75,36 +96,51 @@ void Bacteria::DoAction()
         switch (cmd.cmd) {
         case Actions::move:
             cmd_Move(cmd);
+            energy-=move_energy;
             break;
         case Actions::clone:
             cmd_Clone(cmd);
+            energy-=clone_energy;
             break;
         case Actions::photo:
             cmd_Photo(cmd);
+            energy-=photo_enery;
             break;
         case Actions::lffood:
             cmd_LookForFood(cmd);
+            energy-=lffood_energy;
             break;
         case Actions::eat_food:
             cmd_EatFood(cmd);
+            energy-=eat_food_energy;
             break;
         case Actions::lfenemy:
             cmd_LookForEnemy(cmd);
+            energy-=lfenemy_energy;
             break;
         case Actions::suicide:
             cmd_Suicide(cmd);
+            energy-=suicide_energy;
             break;
         case Actions::convert_atp:
             cmd_ConvertAtpToEnergy(cmd);
+            energy-=convert_atp_energy;
             break;
         case Actions::lffriend:
             cmd_LookForFriend(cmd);
+            energy-=lffriend_energy;
             break;
         case Actions::attack:
             cmd_Attack(cmd);
+            energy-=attack_energy;
             break;
         case Actions::hme:
             cmd_HowMuchEnergy(cmd);
+            energy-=hme_energy;
+            break;
+        case Actions::heal:
+            cmd_Heal(cmd);
+            energy-=heal_energy;
             break;
         default:
             throw IMPOSSIBLE;
@@ -151,7 +187,10 @@ void Bacteria::cmd_Clone(Command cmd)
     int8_t dx,dy;
     uint8_t position = cmd.param%25;
     TransformToCoordinates(dx,dy,position,2);
-    Clone(dx,dy);
+    if(water.lock()->GetTime()-birth_time>10){
+        Clone(dx,dy);
+
+    }
     cmd_ptr += cmd.offset[0];
 }
 
@@ -190,7 +229,7 @@ void Bacteria::cmd_EatFood(Command cmd)
     TransformToCoordinates(dx,dy,position);
     try {
         uint16_t& food = water.lock()->GetFoodField().Get(x+dx,y+dy);
-        atp+=food;
+        energy+=food;
         food=0;
     } catch (int e) {
         if(e!=INCORRECT_INDEX){
@@ -238,8 +277,8 @@ void Bacteria::cmd_Suicide(Command cmd)
     static int counter = 0;
     counter++;
     stop_action=true;
-    water.lock()->GetFoodField().Get(x,y)+=50;
-    energy=0;
+    //water.lock()->GetFoodField().Get(x,y)+=50;
+    hp=-1;
 }
 
 void Bacteria::cmd_ConvertAtpToEnergy(Command cmd)
@@ -293,14 +332,13 @@ void Bacteria::cmd_Attack(Command cmd)
     TransformToCoordinates(dx,dy,position);
     try {
         for(auto iter=water.lock()->GetBattleField().Get(x+dx,y+dy).begin();iter!=water.lock()->GetBattleField().Get(x+dx,y+dy).end();iter++){
-            (**iter).energy-=attack*10;
+            (**iter).hp-=attack*2;
         }
     } catch (int e) {
         if(e!=INCORRECT_INDEX){
             throw;
         }
     }
-    energy-=5;
 }
 
 void Bacteria::cmd_HowMuchEnergy(Command cmd)
@@ -313,6 +351,21 @@ void Bacteria::cmd_HowMuchEnergy(Command cmd)
     }
     else{
         cmd_ptr+=cmd.offset[1];
+    }
+}
+
+void Bacteria::cmd_Heal(Command cmd)
+{
+    static int counter = 0;
+    counter++;
+    int added = cmd.param%10+5;
+    if(energy>added){
+        hp+=added;
+        energy-=added;
+    }
+    else{
+        hp+=energy;
+        energy=0;
     }
 }
 
@@ -368,7 +421,7 @@ int16_t Bacteria::GetHP()
     return hp;
 }
 
-void Bacteria::InreaceHP(int16_t added_hp)
+void Bacteria::IncreaseHP(int16_t added_hp)
 {
     hp += added_hp;
 }
